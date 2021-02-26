@@ -1,3 +1,4 @@
+
 class Board:
     def __init__(self, resource_number_pairs, edge_length=3):
         """ Make tiles with a default size of board
@@ -76,9 +77,6 @@ class Tile:
     def __str__(self):
         return str([self.resource, self.dice_number] + [str(node) for node in self.nodes])
 
-    #def _add_node(self, )
-
-    #def get_node(self, )
 class Node:
     def __init__(self, edges, id=0, can_build=True, inhabitant=None):
         self.edges = edges
@@ -91,9 +89,20 @@ class Node:
 
     def __str__(self):
         return str(self.id) + ":" + str([edge.end.id if edge.start == self else edge.start.id for edge in self.edges])
+    
+    def build(self, house):
+        for edge in edges:
+            edge.start.can_build = False
+            edge.end.can_build = False
+        self.inhabitant = house
+
+    def potential_outgoing_roads(self, player):
+        if self.can_build or self.inhabitant.isPlayer(player):
+            return [edge for edge in self.edges if not edge.inhabitant_road]
+        return []
 
 class Edge:
-    def __init__(self, start, end, inhabitant_road=False):
+    def __init__(self, start, end, inhabitant_road=None):
         if start.id <= end.id: #add in numerical order by id. Makes edge comparison easier
             self.start = start
             self.end = end
@@ -108,5 +117,23 @@ class Edge:
     def __str__(self):
         return str(self.start.id) + "=>" + str(self.end.id)
 
-board = Board([ResourceNumberPair("wheat", 6), ResourceNumberPair("brick", 8), ResourceNumberPair("wood", 5)])
-print([str(i) for i in board.tiles])
+class House: 
+    def __init__(self, player):
+        self.player = player
+        self.upgraded = False
+    
+    def upgrade(self):
+        self.upgraded = True
+    
+    def isPlayer(self, player):
+        return self.player == player # remember to implement __eq__ for player
+    
+    def get_resources(self, resource):
+        self.player.add(resource)
+        if self.upgraded:
+            self.player.add(resource)
+
+
+if __name__ = "main":
+    board = Board([ResourceNumberPair("wheat", 6), ResourceNumberPair("brick", 8), ResourceNumberPair("wood", 5)])
+    print([str(i) for i in board.tiles])
