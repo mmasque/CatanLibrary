@@ -6,6 +6,7 @@ class Board:
         """
         assert(len(resource_number_pairs) > 0)
         self.tiles = []
+        self.nodes = []
         rows = []
         node_count = 0 #for node id's. They are convenient for checking equality for nodes and edges.
         for row_length in list(range(edge_length, 2 * edge_length)) + list(range(2 * edge_length - 2, edge_length - 1, -1)): # a list of the row lengths (3,4,5,4,3)
@@ -24,7 +25,9 @@ class Board:
 
                 for i in range(len(new_tile_nodes)):
                     if new_tile_nodes[i] == 0: #new node is created because this node could not be inherited from existing tiles
-                        new_tile_nodes[i] = Node([], node_count)
+                        new_node = Node([], node_count)
+                        new_tile_nodes[i] = new_node
+                        self.nodes.append(new_node)
                         node_count += 1
                 
 
@@ -41,8 +44,7 @@ class Board:
                     start = new_tile_nodes[i]
                     end = new_tile_nodes[(i+1)%6]
                     edge = Edge(start, end)
-                    print([str(edge) for edge in start.edges])
-                    if not (edge in start.edges):
+                    if edge not in start.edges:
                         start.edges.append(edge)
                         end.edges.append(edge)
 
@@ -61,6 +63,9 @@ class Board:
         tile_nodes[0] = rows[-1][tile + narrower_row].nodes[4]
         tile_nodes[1] = rows[-1][tile + narrower_row].nodes[3]
 
+    def available_nodes(self):
+        return [node for node in self.nodes if node.can_build]
+
 class ResourceNumberPair:
     #not 100% necessary but a convenient data structure for tiles
     def __init__(self, resource, dice_number):
@@ -78,11 +83,12 @@ class Tile:
         return str([self.resource, self.dice_number] + [str(node) for node in self.nodes])
 
 class Node:
-    def __init__(self, edges, id=0, can_build=True, inhabitant=None):
+    def __init__(self, edges, pid=0, can_build=True, inhabitant=None):
         self.edges = edges
-        self.id = id
+        self.id = pid
         self.can_build = can_build
         self.inhabitant = inhabitant
+        self.edges_unlocked = True
     
     def __eq__(self, other):
         return isinstance(other, Node) and self.id == other.id
@@ -101,6 +107,9 @@ class Node:
             return [edge for edge in self.edges if not edge.inhabitant_road]
         return []
 
+    def __hash__(self):
+        return self.id
+
 class Edge:
     def __init__(self, start, end, inhabitant_road=None):
         if start.id <= end.id: #add in numerical order by id. Makes edge comparison easier
@@ -116,6 +125,10 @@ class Edge:
     
     def __str__(self):
         return str(self.start.id) + "=>" + str(self.end.id)
+    
+    def __hash__(self):
+        return self.__str__()
+
 
 class House: 
     def __init__(self, player):
@@ -134,6 +147,6 @@ class House:
             self.player.add(resource)
 
 
-if __name__ = "main":
+if __name__ == "main":
     board = Board([ResourceNumberPair("wheat", 6), ResourceNumberPair("brick", 8), ResourceNumberPair("wood", 5)])
     print([str(i) for i in board.tiles])
