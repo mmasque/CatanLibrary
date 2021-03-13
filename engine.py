@@ -41,11 +41,17 @@ class Engine:
         
         # initial placement of houses
         # ...
-
+        for players in [self.players, reversed(self.players)]: #[i for i in range(len(self.players))] + [len(selfi for i in range(len(self.players))]
+            for player in players:
+                self.place_starting_house(player)
+                self.place_starting_road(player)
+        
         # general turn of each player loop                
 
-
-    def place_starting_houses(self, player):
+    #YOU LEFT THE ZOOM CALL 
+    #I KNOW I KNOW, GIMME A SEC
+    #HAHA OKAY LETS LEAVE THIs here as a comment
+    def place_starting_house(self, player):
         available_nodes = board.available_nodes()
         chosen_node = player.choose_house(board)
         
@@ -56,4 +62,21 @@ class Engine:
         else:
             # crash, player failed
             raise ValueError("Invalid house selection by player: " +  player.display_name)
+    
+    def place_starting_road(self, player):
+        available_nodes = player.road_options()
+        chosen_road = player.choose_road()
         
+        if chosen_road in available_road:            
+            # valid, place a house
+            #node.inhabitant = House(player)
+            #player.houses.append(node.inhabitant)
+            # This is annoying, because we have to update the nodes that the player now owns. 
+            # this should happen automatically when we call add road to player. 
+
+        
+        else:
+            # crash, player failed
+            raise ValueError("Invalid road selection by player: " +  player.display_name)
+    
+    
