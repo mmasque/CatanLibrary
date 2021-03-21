@@ -1,4 +1,3 @@
-
 class Board:
     def __init__(self, resource_number_pairs, edge_length=3):
         """ Make tiles with a default size of board
@@ -129,6 +128,8 @@ class Edge:
     def __hash__(self):
         return self.__str__()
 
+    def add_inhabitant(self,pid):
+        self.inhabitant_road = pid
 
 class House: 
     def __init__(self, player):

@@ -9,6 +9,7 @@ class Player():
         self.points = 0
         self.nodes = {}#[] 
         self.houses = []
+        self.roads = []
         self.resources = {key: 0 for key in types}
         
     # example : self.houses[choice].upgrade()
@@ -42,7 +43,17 @@ class Player():
     def upgrade_options(self):
         return [house for house in self.houses if not house.upgraded]
 
-
-
-
+    def place_road(self, edge):
+        # update its representation of available nodes
+        self.add_node(edge.start)
+        self.add_node(edge.end)
+        self.roads.append(edge)
     
+    def place_house(self, house):
+        self.houses.append(house)
+
+    def add_node(self, node):
+        if node not in self.nodes:
+            self.nodes.append(node)
+        
+
