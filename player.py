@@ -1,16 +1,16 @@
 from board import *
+from engine import RuleBook
 
-types = ["WHEAT", "BRICK", "STONE", "WOOD", "CATTLE"]
 
 class Player():
     def __init__(self, p_id, display_name):
         self.id = p_id
         self.display_name = display_name
         self.points = 0
-        self.nodes = {}#[] 
+        self.nodes = [] 
         self.houses = []
         self.roads = []
-        self.resources = {key: 0 for key in types}
+        self.resources = {key: 0 for key in RuleBook.types}
         
     # example : self.houses[choice].upgrade()
 
@@ -29,13 +29,13 @@ class Player():
 
     def road_options(self):
         opts = []
-        for node in self.nodes.values():
+        for node in self.nodes:
             opts += node.potential_outgoing_roads(self)
         return list(set(opts))
 
     def house_options(self):
         opts = []
-        for node in self.nodes.values():
+        for node in self.nodes:
             if node.can_build and node not in opts:
                 opts.append(node)
         return opts
@@ -55,5 +55,10 @@ class Player():
     def add_node(self, node):
         if node not in self.nodes:
             self.nodes.append(node)
-        
+    
+    def choose_house(self, board):
+        pass
+
+    def choose_road(self, board):
+        pass
 

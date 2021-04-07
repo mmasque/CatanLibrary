@@ -49,15 +49,18 @@ class Board:
 
             rows.append(current_row)
 
+    @staticmethod
     def update_shared_left_nodes(tile_nodes, tile, row):
         #left node rule. can be explained by diagram.
         tile_nodes[5] = row[-1].nodes[1]
         tile_nodes[4] = row[-1].nodes[2]
-    
+
+    @staticmethod
     def update_shared_top_left_nodes(tile_nodes, tile, rows, narrower_row):
         tile_nodes[0] = rows[-1][tile-1 + narrower_row].nodes[2]
         tile_nodes[5] = rows[-1][tile-1 + narrower_row].nodes[3]
-    
+
+    @staticmethod
     def update_shared_top_right_nodes(tile_nodes, tile, rows, narrower_row):
         tile_nodes[0] = rows[-1][tile + narrower_row].nodes[4]
         tile_nodes[1] = rows[-1][tile + narrower_row].nodes[3]
@@ -96,7 +99,7 @@ class Node:
         return str(self.id) + ":" + str([edge.end.id if edge.start == self else edge.start.id for edge in self.edges])
     
     def build(self, house):
-        for edge in edges:
+        for edge in self.edges:
             edge.start.can_build = False
             edge.end.can_build = False
         self.inhabitant = house
@@ -129,6 +132,8 @@ class Edge:
         return self.__str__()
 
     def add_inhabitant(self,pid):
+        assert self.inhabitant_road is None, "you are trying to build on top of another road"
+        assert self.start.id == pid or self.end.id == pid, "this road cannot be built by the player"
         self.inhabitant_road = pid
 
 class House: 
